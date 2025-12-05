@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist, createJSONStorage, StateStorage } from "zustand/middleware";
+import { persist, PersistStorage, StorageValue } from "zustand/middleware";
 
 export type BudgetPayload = {
   income: string;
@@ -29,27 +29,32 @@ interface BudgetState {
 // Get user-specific storage key
 function getStorageKey(email: string | null): string {
   if (!email) return "budget-storage-guest";
-  // Create a safe key from email (replace @ and . with -)
   const safeEmail = email.replace(/[@.]/g, "-");
   return `budget-storage-${safeEmail}`;
 }
 
-// Custom storage that uses user-specific keys
-function createUserStorage(): StateStorage {
+// ✅ Polished storage adapter with correct types
+function createUserStorage(): PersistStorage<BudgetState> {
   return {
-    getItem: (name: string): string | null => {
+    getItem: async (name: string): Promise<StorageValue<BudgetState> | null> => {
       if (typeof window === "undefined") return null;
       const userEmail = localStorage.getItem("bb_email");
       const key = getStorageKey(userEmail);
-      return localStorage.getItem(key);
+      const stored = localStorage.getItem(key);
+      if (!stored) return null;
+      try {
+        return JSON.parse(stored);
+      } catch {
+        return null;
+      }
     },
-    setItem: (name: string, value: string): void => {
+    setItem: async (name: string, value: StorageValue<BudgetState>): Promise<void> => {
       if (typeof window === "undefined") return;
       const userEmail = localStorage.getItem("bb_email");
       const key = getStorageKey(userEmail);
-      localStorage.setItem(key, value);
+      localStorage.setItem(key, JSON.stringify(value));
     },
-    removeItem: (name: string): void => {
+    removeItem: async (name: string): Promise<void> => {
       if (typeof window === "undefined") return;
       const userEmail = localStorage.getItem("bb_email");
       const key = getStorageKey(userEmail);
@@ -73,7 +78,9 @@ export const useBudgetStore = create<BudgetState>()(
       lastLocalEditAt: null,
       lastServerSyncAt: null,
       syncStatus: "LocalOnly",
-      currentUserEmail: typeof window !== "undefined" ? localStorage.getItem("bb_email") : null,
+      currentUserEmail:
+        typeof window !== "undefined" ? localStorage.getItem("bb_email") : null,
+
       setField: (key, value) => {
         set((state) => {
           const updated = { ...state.budget, [key]: value };
@@ -89,18 +96,21 @@ export const useBudgetStore = create<BudgetState>()(
           };
         });
       },
+
       setBudget: (newBudget) => {
         set(() => ({
           budget: newBudget,
           lastLocalEditAt: Date.now(),
         }));
       },
+
       markSynced: (timestamp) => {
         set(() => ({
           lastServerSyncAt: timestamp,
           syncStatus: "Synced",
         }));
       },
+
       resetStore: () => {
         set({
           budget: {
@@ -117,14 +127,11 @@ export const useBudgetStore = create<BudgetState>()(
           syncStatus: "LocalOnly",
         });
       },
+
       setUserEmail: (email) => {
         const currentEmail = get().currentUserEmail;
-        // If user changed, reset the store
         if (currentEmail !== email) {
-          // Update user email first
           set({ currentUserEmail: email });
-          
-          // Reset to default state - persist middleware will load from new user's storage
           set({
             budget: {
               income: "",
@@ -139,8 +146,7 @@ export const useBudgetStore = create<BudgetState>()(
             lastServerSyncAt: null,
             syncStatus: "LocalOnly",
           });
-          
-          // Manually load new user's data if it exists
+
           if (typeof window !== "undefined" && email) {
             const key = getStorageKey(email);
             const stored = localStorage.getItem(key);
@@ -148,14 +154,13 @@ export const useBudgetStore = create<BudgetState>()(
               try {
                 const parsed = JSON.parse(stored);
                 if (parsed.state) {
-                  // Merge loaded state
                   set({
                     ...parsed.state,
                     currentUserEmail: email,
                   });
                 }
-              } catch (e) {
-                // Ignore parse errors, use default state
+              } catch {
+                // ignore parse errors
               }
             }
           }
@@ -166,7 +171,7 @@ export const useBudgetStore = create<BudgetState>()(
     }),
     {
       name: "budget-storage",
-      storage: createUserStorage(),
+      storage: createUserStorage(), // ✅ now correct type
     }
   )
 );
