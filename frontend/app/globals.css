@@ -1,0 +1,103 @@
+@import "../src/theme/nord.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body {
+    height: 100%;
+    background: linear-gradient(135deg, #2E3440 0%, #3B4252 100%);
+    color: var(--nord-6);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  }
+  
+  * {
+    @apply transition-colors duration-200;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-nord-1/90 backdrop-blur-sm text-nord-6 rounded-xl shadow-xl border border-nord-3/20 p-6;
+    @apply hover:shadow-2xl hover:border-nord-8/30 transition-all duration-300;
+  }
+  
+  .input {
+    @apply w-full px-4 py-3 rounded-lg bg-nord-2/80 text-nord-6 placeholder-nord-4;
+    @apply outline-none border border-nord-3/30 focus:border-nord-8 focus:ring-2 focus:ring-nord-8/20;
+    @apply transition-all duration-200 hover:border-nord-3/50;
+  }
+  
+  .input:focus {
+    @apply bg-nord-2;
+  }
+  
+  .btn {
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-lg font-medium;
+    @apply text-white bg-gradient-to-r from-nord-8 to-nord-9 hover:from-nord-9 hover:to-nord-10;
+    @apply shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
+    @apply transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none;
+    @apply focus:outline-none focus:ring-2 focus:ring-nord-8 focus:ring-offset-2 focus:ring-offset-nord-1;
+  }
+  
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-lg font-medium;
+    @apply text-white bg-gradient-to-r from-nord-10 to-nord-9 hover:from-nord-9 hover:to-nord-8;
+    @apply shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
+    @apply transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none;
+    @apply focus:outline-none focus:ring-2 focus:ring-nord-10 focus:ring-offset-2 focus:ring-offset-nord-1;
+  }
+  
+  .btn-outline {
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-lg font-medium;
+    @apply text-nord-6 bg-transparent border-2 border-nord-8 hover:bg-nord-8 hover:text-white;
+    @apply transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .status-badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold;
+  }
+  
+  .status-local {
+    @apply bg-nord-13/20 text-nord-13 border border-nord-13/30;
+  }
+  
+  .status-pending {
+    @apply bg-nord-12/20 text-nord-12 border border-nord-12/30;
+  }
+  
+  .status-synced {
+    @apply bg-nord-14/20 text-nord-14 border border-nord-14/30;
+  }
+}
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-in;
+  }
+  
+  .animate-slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
