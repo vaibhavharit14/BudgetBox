@@ -1,17 +1,22 @@
 # BudgetBox - Offline-First Personal Budgeting App
 
-A real, working **Offline-First** personal budgeting application built with Local-First principles. Works completely offline, auto-saves every keystroke locally, and syncs safely when the network returns.
+A real, working Offline-First personal budgeting application built with Local-First principles. Works completely offline, auto-saves every keystroke locally, and syncs safely when the network returns.
 
-## 🎯 Assignment Details
+# Assignment Details
 
-**Assignment Name:** BudgetBox  
-**Role:** Frontend / Fullstack Developer  
-**Goal:** Build a real, working Offline-First Personal Budgeting App
+Assignment Name: BudgetBox  
+Role: Frontend / Fullstack Developer  
+Goal: Build a real, working Offline-First Personal Budgeting App
 
-## ✨ Features
+# Live Demo
 
-### 1. Add / Edit Monthly Budget
-- ✅ Single form with all required fields:
+Frontend: Vercel URL : https://budget-box-8ssa.vercel.app/login
+**Backend:** [Your Railway/Render URL]
+
+# Features
+
+ 1. Add / Edit Monthly Budget
+- Single form with all required fields:
   - Income (Monthly income input)
   - Monthly Bills (Rent, EMI, utilities)
   - Food (Groceries + dining)
@@ -19,57 +24,57 @@ A real, working **Offline-First** personal budgeting application built with Loca
   - Subscriptions (OTT, SaaS, apps)
   - Miscellaneous (Others)
   - Description (Notes)
-- ✅ Edit anytime
-- ✅ Auto-save field value instantly (every keystroke)
-- ✅ Works offline with nowhere to get stuck
+- Edit anytime
+- Auto-save field value instantly (every keystroke)
+- Works offline with nowhere to get stuck
 
-### 2. Auto-Generated Dashboard
-- ✅ **Burn Rate** (Total expenses / Income)
-- ✅ **Savings Potential** (Income – Total Spend)
-- ✅ **Month-End Prediction** (Based on current trend)
-- ✅ **Category Pie Chart** (Using Recharts)
-- ✅ **Anomaly Warnings** (Rule-based):
+2. Auto-Generated Dashboard
+- Burn Rate (Total expenses / Income)
+- Savings Potential (Income – Total Spend)
+- Month-End Prediction (Based on current trend)
+- Category Pie Chart (Using Recharts)
+- Anomaly Warnings (Rule-based):
   - Food > 40% of income → "Reduce food spend next month"
   - Subscriptions > 30% → "Consider cancelling unused apps"
   - Savings negative → "Your expenses exceed income"
   - Burn rate > 90% → "You're spending almost all your income"
 
 ### 3. Local-First Data Behavior
-- ✅ **Local DB:** Zustand Persist with localStorage (IndexedDB compatible)
-- ✅ **Offline Behavior:**
+- Local DB: Zustand Persist with localStorage (IndexedDB compatible)
+- Offline Behavior:
   - App works even with 0 internet
   - Every keystroke is auto-saved
   - Offline indicator badge
-- ✅ **Sync Logic** with clear statuses:
-  - **Local Only** - Saved locally, never synced
-  - **Sync Pending** - Edits waiting for network
-  - **Synced** - Both server & local are aligned
+- Sync Logic with clear statuses:
+  - Local Only - Saved locally, never synced
+  - Sync Pending - Edits waiting for network
+  - Synced - Both server & local are aligned
 
-### 4. Optional AI Suggestions
-- ✅ Rule-based suggestions (no GPT)
-- ✅ Anomaly detection and warnings
-- ✅ Smart budget insights
+### 4. Optional Rule-Based Suggestions
+- Rule-based suggestions (no GPT)
+- Anomaly detection and warnings
+- Smart budget insights
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Frontend
-- ✅ **Next.js 15** (App Router)
-- ✅ **React 18** + **TypeScript**
-- ✅ **State:** Zustand with Persist middleware
-- ✅ **Styling:** TailwindCSS with Nord theme
-- ✅ **Charts:** Recharts
+- Next.js 15 (App Router)
+- React 18 + TypeScript
+- State: Zustand with Persist middleware
+- Styling: TailwindCSS with Nord theme
+- Charts: Recharts
 
 ### Backend
-- ✅ **Node.js** with Express
-- ✅ **Database:** PostgreSQL with Prisma ORM
-- ✅ **Authentication:** JWT tokens
-- ✅ **Validation:** Zod
+- Node.js with Express
+- Database: PostgreSQL with Prisma ORM
+- Authentication: JWT tokens
+- Validation: Zod
 
 ### Database
-- ✅ **Local DB:** Zustand Persist (localStorage/IndexedDB)
-- ✅ **Server DB:** PostgreSQL
+- Local DB: Zustand Persist (localStorage/IndexedDB)
+- Server DB: PostgreSQL
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 BudgetBox/
@@ -106,7 +111,7 @@ BudgetBox/
 └── README.md               # This file
 ```
 
-## 🚀 Setup Instructions
+## Setup Instructions
 
 ### Prerequisites
 - Node.js 18+ installed
@@ -115,17 +120,17 @@ BudgetBox/
 
 ### Backend Setup
 
-1. **Navigate to backend directory:**
+1. Navigate to backend directory:
    ```bash
    cd backend
    ```
 
-2. **Install dependencies:**
+2. Install dependencies:
    ```bash
    npm install
    ```
 
-3. **Set up environment variables:**
+3. Set up environment variables:  
    Create a `.env` file in the `backend` directory:
    ```env
    DATABASE_URL="postgresql://user:password@localhost:5432/budgetbox"
@@ -135,48 +140,43 @@ BudgetBox/
    DEMO_PASSWORD="HireMe@2025!"
    ```
 
-4. **Run database migration:**
+4. Run database migration:
    ```bash
-   # Fix database schema if needed
    node fix-database.js
-   
-   # Generate Prisma client
    npm run generate
    ```
 
-5. **Start the backend server:**
+5. Start the backend server:
    ```bash
    npm run dev
    ```
-
    The backend will run on `http://localhost:4000`
 
 ### Frontend Setup
 
-1. **Navigate to frontend directory:**
+1. Navigate to frontend directory:
    ```bash
    cd frontend
    ```
 
-2. **Install dependencies:**
+2. Install dependencies:
    ```bash
    npm install
    ```
 
-3. **Start the development server:**
+3. Start the development server:
    ```bash
    npm run dev
    ```
-
    The frontend will run on `http://localhost:3000`
 
-## 🧪 Testing Offline Mode
+## Testing Offline Mode
 
 ### Method 1: Browser DevTools
 1. Open Chrome DevTools (F12)
-2. Go to **Network** tab
-3. Select **Offline** from the throttling dropdown
-4. Try editing the budget form - it should work perfectly!
+2. Go to Network tab
+3. Select Offline from the throttling dropdown
+4. Try editing the budget form - it should work perfectly
 
 ### Method 2: Disconnect Network
 1. Disconnect your WiFi/Ethernet
@@ -187,33 +187,33 @@ BudgetBox/
 ### Method 3: Service Worker (if implemented)
 - The app will cache resources and work offline automatically
 
-## 🔐 Demo Login Credentials
+## Demo Login Credentials
 
 **Email:** `hire-me@anshumat.org`  
 **Password:** `HireMe@2025!`
 
 This user is automatically created when the backend starts, so you can log in immediately without registration.
 
-## 📡 API Endpoints
+## API Endpoints
 
 ### Authentication
-- `POST /auth/register` - Register new user
-- `POST /auth/login` - Login user (returns JWT token)
+- POST /auth/register - Register new user
+- POST /auth/login - Login user (returns JWT token)
 
 ### Budget
-- `POST /budget/sync` - Sync local budget to server (requires auth)
-- `GET /budget/latest` - Fetch latest budget from server (requires auth)
+- POST /budget/sync - Sync local budget to server (requires auth)
+- GET /budget/latest - Fetch latest budget from server (requires auth)
 
 ### Health Check
-- `GET /health` - Server health status
+- GET /health - Server health status
 
-## 🏗️ Architecture
+## Architecture
 
 ### Local-First Design
-1. **Local Storage:** Zustand Persist automatically saves to localStorage
-2. **Auto-save:** Every keystroke triggers `setField()` which persists immediately
-3. **Sync Status:** Tracks LocalOnly → SyncPending → Synced states
-4. **Offline Detection:** Browser `online`/`offline` events show status badge
+1. Local Storage: Zustand Persist automatically saves to localStorage
+2. Auto-save: Every keystroke triggers `setField()` which persists immediately
+3. Sync Status: Tracks LocalOnly → SyncPending → Synced states
+4. Offline Detection: Browser online/offline events show status badge
 
 ### Data Flow
 ```
@@ -226,15 +226,15 @@ User Input → Zustand Store → localStorage (instant)
          Update Sync Status → Synced
 ```
 
-## 📊 Dashboard Analytics
+## Dashboard Analytics
 
 The dashboard automatically calculates:
-- **Burn Rate:** `(Total Expenses / Income) × 100`
-- **Savings Potential:** `Income - Total Expenses`
-- **Month-End Prediction:** `Daily Spend Rate × Days in Month`
-- **Category Distribution:** Visual pie chart with percentages
+- Burn Rate: (Total Expenses / Income) × 100
+- Savings Potential: Income - Total Expenses
+- Month-End Prediction: Daily Spend Rate × Days in Month
+- Category Distribution: Visual pie chart with percentages
 
-## ⚠️ Anomaly Detection Rules
+## Anomaly Detection Rules
 
 The app detects and warns about:
 1. Food spending > 40% of income
@@ -242,58 +242,22 @@ The app detects and warns about:
 3. Negative savings (expenses exceed income)
 4. Burn rate > 90%
 
-## 🎨 UI/UX Features
+## UI/UX Features
 
-- ✅ Professional, polished UI with Nord theme
-- ✅ Smooth animations and transitions
-- ✅ Responsive design (mobile-friendly)
-- ✅ Loading states and error handling
-- ✅ Status badges and indicators
-- ✅ Offline indicator badge
-- ✅ Gradient buttons and cards
+- Professional, polished UI with Nord theme
+- Smooth animations and transitions
+- Responsive design (mobile-friendly)
+- Loading states and error handling
+- Status badges and indicators
+- Offline indicator badge
+- Gradient buttons and cards
 
-## 📝 Notes for Reviewer
+## Notes for Reviewer
 
-- **Local-First Implementation:** Uses Zustand Persist which stores data in localStorage (IndexedDB compatible). Every keystroke is auto-saved.
-- **Offline Mode:** Fully functional offline. The app detects network status and shows an indicator.
-- **Sync Logic:** Clear status tracking (LocalOnly, SyncPending, Synced) with visual badges.
-- **Dashboard:** Complete analytics with burn rate, savings potential, month-end prediction, and pie chart.
-- **Demo User:** Automatically provisioned on server start for easy testing.
-- **Error Handling:** Comprehensive error handling with user-friendly messages.
-
-## 🚀 Deployment
-
-### Frontend (Vercel)
-1. Push code to GitHub
-2. Import project in Vercel
-3. Set build command: `cd frontend && npm run build`
-4. Set output directory: `frontend/.next`
-5. Deploy!
-
-### Backend (Railway/Render)
-1. Connect GitHub repository
-2. Set root directory: `backend`
-3. Add environment variables (DATABASE_URL, JWT_SECRET)
-4. Deploy!
-
-## 📸 Screenshots
-
-*Add screenshots of:*
-- Budget form with data
-- Dashboard with analytics
-- Offline mode indicator
-- Sync status badges
-
-## 🔗 Live Demo
-
-**Frontend:** [Your Vercel URL]  
-**Backend:** [Your Railway/Render URL]
-
-## 📄 License
-
-ISC
-
----
-
-**Built with ❤️ for the BudgetBox assignment**
+- Local-First Implementation: Uses Zustand Persist which stores data in localStorage (IndexedDB compatible). Every keystroke is auto-saved.
+- Offline Mode: Fully functional offline. The app detects network status and shows an indicator.
+- Sync Logic: Clear status tracking (LocalOnly, SyncPending, Synced) with visual badges.
+- Dashboard: Complete analytics with burn rate, savings potential, month-end prediction, and pie chart.
+- Demo User: Automatically provisioned on server start for easy testing.
+- Error Handling: Comprehensive error handling with user-friendly messages.
 
