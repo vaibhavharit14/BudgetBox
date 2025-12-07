@@ -12,7 +12,7 @@ const app = express();
 app.use(express.json());
 
 const allowedOrigins = [
-  "https://budget-box-8ssa.versal.app",
+  "https://budget-box-8ssa.vercal.app",
   "https://budget-box-8ssa-bbac7rk07-vaibhavharit14s-projects.vercel.app",
   "https://budget-box-8ssa.vercel.app",
   "http://localhost:3000",
@@ -59,7 +59,8 @@ app.use("/auth", authRoutes);
 app.use("/budget", budgetRoutes);
 
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-  res.status(500).json({ success: false, message: "Unexpected server error" });
+  console.error("❌ Server error:", err); // log actual error
+  res.status(500).json({ success: false, message: err.message || "Unexpected server error" });
 });
 
 const PORT = process.env.PORT || 4000;
