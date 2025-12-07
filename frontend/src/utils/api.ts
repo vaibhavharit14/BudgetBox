@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://budgetbox-2zg4.onrender.com";
 
 function getToken() {
   return typeof window !== "undefined" ? localStorage.getItem("token") : null;

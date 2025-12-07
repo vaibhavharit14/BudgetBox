@@ -12,20 +12,29 @@ const app = express();
 app.use(express.json());
 
 const allowedOrigins = [
+  "https://budget-box-8ssa.versal.app",
   "https://budget-box-8ssa-bbac7rk07-vaibhavharit14s-projects.vercel.app",
   "https://budget-box-8ssa.vercel.app",
+  "http://localhost:3000",
   process.env.FRONTEND_URL
 ].filter(Boolean);
 
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) {
+      return callback(null, true);
+    }
+    if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
+      console.warn(`CORS blocked origin: ${origin}`);
       callback(new Error("Not allowed by CORS"));
     }
   },
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 async function ensureDemoUser() {
