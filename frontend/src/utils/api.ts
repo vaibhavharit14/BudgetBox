@@ -1,4 +1,4 @@
-const API_URL = "https://budgetbox-2zg4.onrender.com";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 function getToken() {
   return typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -8,7 +8,7 @@ async function handleResponse(res: Response) {
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
     const msg = data?.message || res.statusText;
-    const error = new Error(`${msg}`) as Error & { status?: number };
+    const error = new Error(msg) as Error & { status?: number };
     error.status = res.status;
     throw error;
   }
@@ -22,7 +22,7 @@ export async function register(email: string, password: string, confirmPassword:
     body: JSON.stringify({ email, password, confirmPassword }),
   });
   const data = await handleResponse(res);
-  const token = data?.token; // ✅ सही property
+  const token = data?.token;
   if (token) localStorage.setItem("token", token);
   return data;
 }
@@ -34,7 +34,7 @@ export async function login(email: string, password: string) {
     body: JSON.stringify({ email, password }),
   });
   const data = await handleResponse(res);
-  const token = data?.token; // ✅ सही property
+  const token = data?.token;
   if (token) localStorage.setItem("token", token);
   return data;
 }
@@ -50,7 +50,7 @@ export async function syncBudget(payload: {
 }) {
   const token = getToken();
   if (!token) throw new Error("No token found");
-  
+
   const res = await fetch(`${API_URL}/budget/sync`, {
     method: "POST",
     headers: {
@@ -65,7 +65,7 @@ export async function syncBudget(payload: {
 export async function getLatestBudget() {
   const token = getToken();
   if (!token) throw new Error("No token found");
-  
+
   const res = await fetch(`${API_URL}/budget/latest`, {
     headers: {
       "Content-Type": "application/json",
