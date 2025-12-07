@@ -8,18 +8,18 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
   password  String
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
   budgets   Budget[]
 }
 
 model Budget {
   id             Int      @id @default(autoincrement())
-  userId         Int      @unique
+  userId         Int
   income         String   @default("")
-  monthly_bills  String   @default("")
+  monthlyBills   String   @default("")
   food           String   @default("")
   transport      String   @default("")
   subscriptions  String   @default("")
@@ -27,5 +27,6 @@ model Budget {
   description    String   @default("")
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+
   user           User     @relation(fields: [userId], references: [id])
 }
