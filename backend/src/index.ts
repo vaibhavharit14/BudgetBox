@@ -12,7 +12,7 @@ const app = express();
 app.use(express.json());
 
 const allowedOrigins = [
-  "https://budget-box-8ssa.vercal.app",
+  "https://budget-box-8ssa.versal.app",
   "https://budget-box-8ssa-bbac7rk07-vaibhavharit14s-projects.vercel.app",
   "https://budget-box-8ssa.vercel.app",
   "http://localhost:3000",
@@ -55,15 +55,37 @@ app.get("/health", (_req: Request, res: Response) => {
   res.json({ success: true, status: "ok", timestamp: new Date().toISOString() });
 });
 
+app.get("/health/db", async (_req: Request, res: Response) => {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    res.json({ success: true, status: "ok" });
+  } catch (error: any) {
+    console.error("DB health check failed:", error);
+    res.status(500).json({ success: false, message: "DB unreachable", detail: error?.message });
+  }
+});
+
 app.use("/auth", authRoutes);
 app.use("/budget", budgetRoutes);
 
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-  console.error("❌ Server error:", err); // log actual error
-  res.status(500).json({ success: false, message: err.message || "Unexpected server error" });
+  console.error("Unhandled error:", err);
+  res.status(500).json({ success: false, message: "Unexpected server error" });
 });
 
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, async () => {
-  await ensureDemoUser();
-});
+
+async function start() {
+  try {
+    await prisma.$connect();
+    await ensureDemoUser();
+    app.listen(PORT, () => {
+      console.log(`Server listening on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error("Failed to start server:", error);
+    process.exit(1);
+  }
+}
+
+start();

@@ -8,7 +8,7 @@ const router = Router();
 // Validation schema
 const budgetSchema = z.object({
   income: z.string(),
-  monthlyBills: z.string(),
+  monthly_bills: z.string(),
   food: z.string(),
   transport: z.string(),
   subscriptions: z.string(),
@@ -31,17 +31,39 @@ router.post("/sync", verifyToken, async (req: AuthRequest, res) => {
     const userId = (req.user as any).id;
 
     const existingBudget = await prisma.budget.findFirst({ where: { userId } });
+    const data = {
+      income: parsed.data.income,
+      monthlyBills: parsed.data.monthly_bills,
+      food: parsed.data.food,
+      transport: parsed.data.transport,
+      subscriptions: parsed.data.subscriptions,
+      misc: parsed.data.misc,
+      description: parsed.data.description,
+    };
 
     const budget = existingBudget
       ? await prisma.budget.update({
           where: { id: existingBudget.id },
-          data: parsed.data,
+          data,
         })
       : await prisma.budget.create({
-          data: { userId, ...parsed.data },
+          data: { userId, ...data },
         });
 
-    return res.json({ success: true, message: "Budget synced successfully", budget });
+    const normalized = {
+      id: budget.id,
+      income: budget.income,
+      monthly_bills: budget.monthlyBills,
+      food: budget.food,
+      transport: budget.transport,
+      subscriptions: budget.subscriptions,
+      misc: budget.misc,
+      description: budget.description,
+      createdAt: budget.createdAt,
+      updatedAt: budget.updatedAt,
+    };
+
+    return res.json({ success: true, message: "Budget synced successfully", budget: normalized });
   } catch (error: any) {
     console.error("❌ Sync budget error:", error);
 
@@ -81,7 +103,21 @@ router.get("/latest", verifyToken, async (req: AuthRequest, res) => {
       return res.status(404).json({ success: false, message: "No budget found" });
     }
 
-    return res.json({ success: true, budget });
+    // Normalize keys for the frontend (snake_case)
+    const normalized = {
+      id: budget.id,
+      income: budget.income,
+      monthly_bills: budget.monthlyBills,
+      food: budget.food,
+      transport: budget.transport,
+      subscriptions: budget.subscriptions,
+      misc: budget.misc,
+      description: budget.description,
+      createdAt: budget.createdAt,
+      updatedAt: budget.updatedAt,
+    };
+
+    return res.json({ success: true, budget: normalized });
   } catch (error: any) {
     console.error("❌ Get latest budget error:", error);
 
