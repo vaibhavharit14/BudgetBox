@@ -1,11 +1,11 @@
-import { Router, Response } from "express";
+import { Router } from "express";
 import prisma from "../lib/prisma";
 import { verifyToken, AuthRequest } from "../middleware/verifyToken";
 import { z } from "zod";
 
 const router = Router();
 
-// ✅ Validation schema
+// Validation schema
 const budgetSchema = z.object({
   income: z.string(),
   monthly_bills: z.string(),
@@ -16,8 +16,8 @@ const budgetSchema = z.object({
   description: z.string(),
 });
 
-// ✅ Sync budget (upsert)
-router.post("/sync", verifyToken, async (req: AuthRequest, res: Response) => {
+// Sync budget (upsert)
+router.post("/sync", verifyToken, async (req: AuthRequest, res) => {
   try {
     const parsed = budgetSchema.safeParse(req.body);
     if (!parsed.success) {
@@ -63,11 +63,7 @@ router.post("/sync", verifyToken, async (req: AuthRequest, res: Response) => {
       updatedAt: budget.updatedAt,
     };
 
-    return res.json({
-      success: true,
-      message: "Budget synced successfully",
-      budget: normalized,
-    });
+    return res.json({ success: true, message: "Budget synced successfully", budget: normalized });
   } catch (error: any) {
     console.error("❌ Sync budget error:", error);
 
@@ -93,8 +89,8 @@ router.post("/sync", verifyToken, async (req: AuthRequest, res: Response) => {
   }
 });
 
-// ✅ Get latest budget
-router.get("/latest", verifyToken, async (req: AuthRequest, res: Response) => {
+// Get latest budget
+router.get("/latest", verifyToken, async (req: AuthRequest, res) => {
   try {
     const userId = (req.user as any).id;
 

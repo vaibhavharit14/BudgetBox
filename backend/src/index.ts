@@ -11,33 +11,32 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
-// ✅ Allowed origins with explicit type
-const allowedOrigins: string[] = [
+const allowedOrigins = [
   "https://budget-box-8ssa.versal.app",
   "https://budget-box-8ssa-bbac7rk07-vaibhavharit14s-projects.vercel.app",
   "https://budget-box-8ssa.vercel.app",
   "http://localhost:3000",
-  process.env.FRONTEND_URL || ""
+  process.env.FRONTEND_URL
 ].filter(Boolean);
 
-// ✅ CORS middleware with typed parameters
-app.use(
-  cors({
-    origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-      if (!origin) return callback(null, true); // allow curl/mobile apps
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-      console.warn(`❌ CORS blocked origin: ${origin}`);
-      return callback(new Error("Not allowed by CORS"));
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"]
-  })
-);
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) {
+      return callback(null, true);
+    }
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.warn(`CORS blocked origin: ${origin}`);
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
-// ✅ Demo user provisioning
 async function ensureDemoUser() {
   const DEMO_EMAIL = process.env.DEMO_EMAIL ?? "hire-me@anshumat.org";
   const DEMO_PASSWORD = process.env.DEMO_PASSWORD ?? "HireMe@2025!";
@@ -46,14 +45,12 @@ async function ensureDemoUser() {
     if (!existing) {
       const hashedPassword = await bcrypt.hash(DEMO_PASSWORD, 10);
       await prisma.user.create({ data: { email: DEMO_EMAIL, password: hashedPassword } });
-      console.log("✅ Demo user created:", DEMO_EMAIL);
     }
   } catch (error) {
-    console.error("⚠️ Demo user error:", error);
+    console.error(error);
   }
 }
 
-// ✅ Health routes
 app.get("/health", (_req: Request, res: Response) => {
   res.json({ success: true, status: "ok", timestamp: new Date().toISOString() });
 });
@@ -68,28 +65,25 @@ app.get("/health/db", async (_req: Request, res: Response) => {
   }
 });
 
-// ✅ Routes
 app.use("/auth", authRoutes);
 app.use("/budget", budgetRoutes);
 
-// ✅ Global error handler
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-  console.error("Unhandled error:", err.message || err);
+  console.error("Unhandled error:", err);
   res.status(500).json({ success: false, message: "Unexpected server error" });
 });
 
-// ✅ Start server
 const PORT = process.env.PORT || 4000;
+
 async function start() {
   try {
     await prisma.$connect();
     await ensureDemoUser();
     app.listen(PORT, () => {
-      console.log(`🚀 Server listening on port ${PORT}`);
-      console.log("✅ Allowed origins:", allowedOrigins);
+      console.log(`Server listening on port ${PORT}`);
     });
   } catch (error) {
-    console.error("❌ Failed to start server:", error);
+    console.error("Failed to start server:", error);
     process.exit(1);
   }
 }
