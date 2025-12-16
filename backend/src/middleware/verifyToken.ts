@@ -1,12 +1,13 @@
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 
 export interface AuthRequest extends Request {
-  user?: any;
+  user?: string | JwtPayload;
 }
 
 export function verifyToken(req: AuthRequest, res: Response, next: NextFunction) {
-  const authHeader = req.headers["authorization"];
+  const authHeader = req.headers["authorization"] as string | undefined;
+
   if (!authHeader) {
     return res.status(401).json({ success: false, message: "Access denied. No token provided." });
   }
@@ -17,10 +18,11 @@ export function verifyToken(req: AuthRequest, res: Response, next: NextFunction)
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
     req.user = decoded;
     next();
-  } catch {
+  } catch (error) {
+    console.error("JWT verification failed:", error);
     return res.status(401).json({ success: false, message: "Invalid token" });
   }
 }
