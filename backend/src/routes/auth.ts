@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, Request, Response } from "express";
 import prisma from "../lib/prisma";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -21,23 +21,20 @@ const loginSchema = z.object({
 const DEMO_EMAIL = process.env.DEMO_EMAIL ?? "hire-me@anshumat.org";
 const DEMO_PASSWORD = process.env.DEMO_PASSWORD ?? "HireMe@2025!";
 
-// Ensure the demo user exists so the default creds always work
-async function ensureDemoUser() {
+// ✅ Ensure the demo user exists so the default creds always work
+async function ensureDemoUser(): Promise<void> {
   const existing = await prisma.user.findUnique({ where: { email: DEMO_EMAIL } });
   if (!existing) {
     const hashedPassword = await bcrypt.hash(DEMO_PASSWORD, 10);
     await prisma.user.create({
-      data: {
-        email: DEMO_EMAIL,
-        password: hashedPassword,
-      },
+      data: { email: DEMO_EMAIL, password: hashedPassword },
     });
     console.log("✅ Demo user provisioned");
   }
 }
 
 // ✅ Register user
-router.post("/register", async (req, res) => {
+router.post("/register", async (req: Request, res: Response) => {
   try {
     const parsed = registerSchema.safeParse(req.body);
     if (!parsed.success) {
@@ -74,7 +71,7 @@ router.post("/register", async (req, res) => {
 });
 
 // ✅ Login user
-router.post("/login", async (req, res) => {
+router.post("/login", async (req: Request, res: Response) => {
   try {
     const parsed = loginSchema.safeParse(req.body);
     if (!parsed.success) {
@@ -118,7 +115,7 @@ router.post("/login", async (req, res) => {
 });
 
 // ✅ Get all users
-router.get("/users", async (_req, res) => {
+router.get("/users", async (_req: Request, res: Response) => {
   try {
     const users = await prisma.user.findMany({
       select: { id: true, email: true, createdAt: true },
