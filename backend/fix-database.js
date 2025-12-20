@@ -1,5 +1,5 @@
 // Script to fix the database schema mismatch
-const { PrismaClient } = require('./src/generated/prisma');
+const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 async function fixDatabase() {

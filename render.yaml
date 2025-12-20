@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: budgetbox-backend
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: budgetbox-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        sync: false
+      - key: DEMO_EMAIL
+        value: hire-me@anshumat.org
+      - key: DEMO_PASSWORD
+        generateValue: true
+
+databases:
+  - name: budgetbox-db
+    databaseName: budgetbox
+    user: budgetbox
+    plan: free

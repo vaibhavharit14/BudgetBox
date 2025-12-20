@@ -12,7 +12,7 @@ const app = express();
 app.use(express.json());
 
 const allowedOrigins = [
-  "https://budget-box-8ssa.versal.app",
+  "https://budget-box-8ssa.vercel.app",
   "https://budget-box-8ssa-bbac7rk07-vaibhavharit14s-projects.vercel.app",
   "https://budget-box-8ssa.vercel.app",
   "http://localhost:3000",
