@@ -3,10 +3,14 @@
 import Link from "next/link";
 import { useUser } from "../context/UserContext";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
   const { email, setEmail } = useUser();
   const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname();
+
+  const isLoginPage = pathname === "/login";
 
   const logout = () => {
     // Clear user email from localStorage
@@ -61,22 +65,25 @@ export default function Navbar() {
 
           {/* Links */}
           <div
-            className={`${
-              menuOpen ? "flex" : "hidden"
-            } flex-col gap-4 absolute top-16 left-0 w-full bg-nord-0 p-4 lg:static lg:flex lg:flex-row lg:items-center lg:gap-6`}
+            className={`${menuOpen ? "flex" : "hidden"
+              } flex-col gap-4 absolute top-16 left-0 w-full bg-nord-0 p-4 lg:static lg:flex lg:flex-row lg:items-center lg:gap-6`}
           >
-            <Link href="/" className="hover:text-nord-8" aria-label="Home Page">
-              Home
-            </Link>
+            {!isLoginPage && (
+              <Link href="/" className="hover:text-nord-8" aria-label="Home Page">
+                Home
+              </Link>
+            )}
             {!email && (
               <>
-                <Link
-                  href="/login"
-                  className="hover:text-nord-8"
-                  aria-label="Login Page"
-                >
-                  Login
-                </Link>
+                {!isLoginPage && (
+                  <Link
+                    href="/login"
+                    className="hover:text-nord-8"
+                    aria-label="Login Page"
+                  >
+                    Login
+                  </Link>
+                )}
                 <Link
                   href="/signup"
                   className="hover:text-nord-8"

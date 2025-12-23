@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useUser } from "../../src/context/UserContext";
+
 import { register } from "../../src/utils/api";
 import Link from "next/link";
 
@@ -13,7 +13,7 @@ export default function SignupPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { setEmail: setCtxEmail } = useUser();
+  // const { setEmail: setCtxEmail } = useUser(); // Unused now
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,9 +35,8 @@ export default function SignupPage() {
     try {
       const res = await register(email, password, confirm);
       if (res.success) {
-        setCtxEmail(email);
-        localStorage.setItem("bb_email", email);
-        router.push("/");
+        // Redirect to login page instead of auto-login
+        router.push("/login");
       } else {
         setError(res.message || "Registration failed");
       }
