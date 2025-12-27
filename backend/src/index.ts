@@ -1,12 +1,16 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import authRoutes from "./routes/auth";
 import budgetRoutes from "./routes/budget";
 import prisma from "./lib/prisma";
 import bcrypt from "bcrypt";
 
-dotenv.config();
+if (!process.env.JWT_SECRET) {
+  console.warn("WARNING: JWT_SECRET is not defined in environment variables. Login will fail.");
+}
 
 const app = express();
 app.use(express.json());

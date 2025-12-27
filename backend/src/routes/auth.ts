@@ -17,21 +17,7 @@ const loginSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
-// Demo credentials (used to auto-provision a user so the demo login works)
-const DEMO_EMAIL: string = process.env.DEMO_EMAIL ?? "hire-me@anshumat.org";
-const DEMO_PASSWORD: string = process.env.DEMO_PASSWORD ?? "HireMe@2025!";
 
-// Ensure the demo user exists so the default creds always work
-async function ensureDemoUser(): Promise<void> {
-  const existing = await prisma.user.findUnique({ where: { email: DEMO_EMAIL } });
-  if (!existing) {
-    const hashedPassword = await bcrypt.hash(DEMO_PASSWORD, 10);
-    await prisma.user.create({
-      data: { email: DEMO_EMAIL, password: hashedPassword },
-    });
-    console.log("✅ Demo user provisioned");
-  }
-}
 
 // ✅ Register user
 router.post("/register", async (req: Request, res: Response): Promise<Response> => {
@@ -84,8 +70,12 @@ router.post("/login", async (req: Request, res: Response): Promise<Response> => 
 
     const { email, password } = parsed.data;
 
-    // Make sure demo user exists so the default credentials work
-    await ensureDemoUser();
+
+    // Ensure JWT_SECRET is available before proceeding
+    if (!process.env.JWT_SECRET) {
+      console.error("❌ Login error: JWT_SECRET is missing");
+      return res.status(500).json({ success: false, message: "Server misconfiguration (missing JWT_SECRET)" });
+    }
 
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
