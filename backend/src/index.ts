@@ -15,10 +15,15 @@ if (!process.env.JWT_SECRET) {
 const app = express();
 app.use(express.json());
 
+// Request logger
+app.use((req, _res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+  next();
+});
+
 const allowedOrigins = [
   "https://budget-box-8ssa.vercel.app",
   "https://budget-box-8ssa-bbac7rk07-vaibhavharit14s-projects.vercel.app",
-  "https://budget-box-8ssa.vercel.app",
   "http://localhost:3000",
   process.env.FRONTEND_URL
 ].filter(Boolean);
@@ -55,6 +60,10 @@ async function ensureDemoUser() {
   }
 }
 
+app.get("/", (_req: Request, res: Response) => {
+  res.json({ message: "BudgetBox API is running" });
+});
+
 app.get("/health", (_req: Request, res: Response) => {
   res.json({ success: true, status: "ok", timestamp: new Date().toISOString() });
 });
@@ -71,6 +80,12 @@ app.get("/health/db", async (_req: Request, res: Response) => {
 
 app.use("/auth", authRoutes);
 app.use("/budget", budgetRoutes);
+
+// Catch-all route for unrecognized paths (404)
+app.use((req: Request, res: Response) => {
+  console.warn(`404 - Unknown route: ${req.method} ${req.url}`);
+  res.status(404).json({ success: false, message: "Route not found" });
+});
 
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
   console.error("Unhandled error:", err);

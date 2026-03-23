@@ -22,7 +22,7 @@ async function fixDatabase() {
     );
     
     const hasNewColumns = tableInfo.some((col) => 
-      col.column_name === 'income' || col.column_name === 'monthly_bills'
+      col.column_name === 'income' || col.column_name === 'monthlyBills'
     );
     
     if (hasOldColumns) {
@@ -43,7 +43,7 @@ async function fixDatabase() {
       
       // Step 1: Add new columns
       await prisma.$executeRaw`ALTER TABLE "Budget" ADD COLUMN IF NOT EXISTS "income" TEXT DEFAULT '';`;
-      await prisma.$executeRaw`ALTER TABLE "Budget" ADD COLUMN IF NOT EXISTS "monthly_bills" TEXT DEFAULT '';`;
+      await prisma.$executeRaw`ALTER TABLE "Budget" ADD COLUMN IF NOT EXISTS "monthlyBills" TEXT DEFAULT '';`;
       await prisma.$executeRaw`ALTER TABLE "Budget" ADD COLUMN IF NOT EXISTS "food" TEXT DEFAULT '';`;
       await prisma.$executeRaw`ALTER TABLE "Budget" ADD COLUMN IF NOT EXISTS "transport" TEXT DEFAULT '';`;
       await prisma.$executeRaw`ALTER TABLE "Budget" ADD COLUMN IF NOT EXISTS "subscriptions" TEXT DEFAULT '';`;
