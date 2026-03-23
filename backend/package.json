@@ -10,7 +10,8 @@
     "postinstall": "npx prisma generate",
     "fix-db": "node fix-database.js && npx prisma generate",
     "migrate": "npx prisma migrate deploy",
-    "generate": "npx prisma generate"
+    "generate": "npx prisma generate",
+    "deploy": "node fix-database.js && npm start"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
