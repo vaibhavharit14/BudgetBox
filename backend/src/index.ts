@@ -15,26 +15,15 @@ if (!process.env.JWT_SECRET) {
 const app = express();
 app.use(express.json());
 
-// Request logger
-app.use((req, _res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
-  next();
-});
-
 const allowedOrigins = [
   "https://budget-box-8ssa.vercel.app",
-  "https://budget-box-8ssa-bbac7rk07-vaibhavharit14s-projects.vercel.app",
   "http://localhost:3000",
   process.env.FRONTEND_URL
 ].filter(Boolean);
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) {
-      return callback(null, true);
-    }
-    if (allowedOrigins.includes(origin)) {
+    if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       console.warn(`CORS blocked origin: ${origin}`);
@@ -56,7 +45,7 @@ async function ensureDemoUser() {
       await prisma.user.create({ data: { email: DEMO_EMAIL, password: hashedPassword } });
     }
   } catch (error) {
-    console.error(error);
+    console.error("Demo user sync failed:", error);
   }
 }
 
@@ -81,9 +70,7 @@ app.get("/health/db", async (_req: Request, res: Response) => {
 app.use("/auth", authRoutes);
 app.use("/budget", budgetRoutes);
 
-// Catch-all route for unrecognized paths (404)
 app.use((req: Request, res: Response) => {
-  console.warn(`404 - Unknown route: ${req.method} ${req.url}`);
   res.status(404).json({ success: false, message: "Route not found" });
 });
 
@@ -98,18 +85,17 @@ async function start() {
   const maxRetries = 5;
   for (let i = 1; i <= maxRetries; i++) {
     try {
-      console.log(`📡 Connecting to database... (Attempt ${i}/${maxRetries})`);
       await prisma.$connect();
       console.log("✅ Database connected successfully.");
       await ensureDemoUser();
       app.listen(PORT, () => {
         console.log(`🚀 Server listening on port ${PORT}`);
       });
-      return; // Success, exit the loop
+      return;
     } catch (error: any) {
       console.error(`⚠️  Database connection attempt ${i} failed:`, error.message);
       if (i === maxRetries) {
-        console.error("❌ Failed to start server after multiple database connection attempts.");
+        console.error("❌ Failed to start server after multiple attempts.");
         process.exit(1);
       }
       const delay = 5000 * i;
@@ -119,4 +105,4 @@ async function start() {
   }
 }
 
-start();
+start();

@@ -13,7 +13,6 @@ export default function SignupPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  // const { setEmail: setCtxEmail } = useUser(); // Unused now
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
