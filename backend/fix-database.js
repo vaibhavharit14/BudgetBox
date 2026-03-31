@@ -1,10 +1,21 @@
 const { PrismaClient } = require('@prisma/client');
 
 async function fixDatabase(retries = 10) {
-  if (!process.env.DATABASE_URL) {
-    console.error('❌ DATABASE_URL is not set. Skipping sync.');
+  let url = process.env.DATABASE_URL;
+
+  if (!url || url.trim() === "") {
+    console.error('❌ DATABASE_URL is missing or empty. Skipping sync.');
     return;
   }
+
+  url = url.trim();
+  if (url.startsWith('"') && url.endsWith('"')) {
+    url = url.substring(1, url.length - 1);
+  }
+
+  process.env.DATABASE_URL = url;
+  
+  console.log(`📡 URL check: ${url.startsWith('postgresql://') || url.startsWith('postgres://') ? 'Valid Protocol' : 'INVALID PROTOCOL'}`);
 
   const prisma = new PrismaClient();
 
