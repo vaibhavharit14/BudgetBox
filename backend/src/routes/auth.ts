@@ -70,7 +70,6 @@ router.post("/login", async (req: Request, res: Response): Promise<Response> => 
 
     const { email, password } = parsed.data;
 
-
     // Ensure JWT_SECRET is available before proceeding
     if (!process.env.JWT_SECRET) {
       console.error("❌ Login error: JWT_SECRET is missing");
@@ -106,17 +105,4 @@ router.post("/login", async (req: Request, res: Response): Promise<Response> => 
   }
 });
 
-// ✅ Get all users
-router.get("/users", async (_req: Request, res: Response): Promise<Response> => {
-  try {
-    const users = await prisma.user.findMany({
-      select: { id: true, email: true, createdAt: true },
-    });
-    return res.json({ success: true, users });
-  } catch (error) {
-    console.error("❌ Fetch users error:", error);
-    return res.status(500).json({ success: false, message: "Failed to fetch users" });
-  }
-});
-
-export default router;
+export default router;
