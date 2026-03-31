@@ -1,22 +1,12 @@
 const { PrismaClient } = require('@prisma/client');
 
 async function fixDatabase(retries = 10) {
-  let prisma;
-  
-  if (process.env.DATABASE_URL) {
-    let url = process.env.DATABASE_URL;
-    if (!url.includes('sslmode=')) {
-      const sep = url.includes('?') ? '&' : '?';
-      url += `${sep}sslmode=require`;
-    }
-    if (!url.includes('connect_timeout')) {
-      const sep = url.includes('?') ? '&' : '?';
-      url += `${sep}connect_timeout=60&pool_timeout=60&socket_timeout=60`;
-    }
-    process.env.DATABASE_URL = url;
+  if (!process.env.DATABASE_URL) {
+    console.error('❌ DATABASE_URL is not set. Skipping sync.');
+    return;
   }
 
-  prisma = new PrismaClient();
+  const prisma = new PrismaClient();
 
   for (let i = 1; i <= retries; i++) {
     try {
@@ -78,9 +68,9 @@ async function fixDatabase(retries = 10) {
     } catch (error) {
       console.error(`⚠️  Database sync attempt ${i} failed:`, error.message);
       if (i === retries) return;
-      await new Promise(resolve => setTimeout(resolve, 10000));
+      await new Promise(resolve => setTimeout(resolve, 5000));
     } finally {
-      if (prisma) await prisma.$disconnect();
+      await prisma.$disconnect();
     }
   }
 }
