@@ -88,3 +88,4 @@ async function fixDatabase(retries = 10) {
 fixDatabase().catch(err => {
   console.error('Fatal error in database sync script:', err);
 });
+

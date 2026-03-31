@@ -14,10 +14,8 @@ export default function HomePage() {
   const { email } = useUser();
   const router = useRouter();
   
-  // Ensure budget store is user-specific
   useUserBudget();
 
-  // Redirect if not logged in
   useEffect(() => {
     if (!email) {
       router.push("/login");
@@ -30,7 +28,6 @@ export default function HomePage() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* Welcome Header */}
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-nord-8 to-nord-9 bg-clip-text text-transparent">
           Welcome back, {email?.split('@')[0]}!
@@ -38,7 +35,6 @@ export default function HomePage() {
         <p className="text-nord-4">Manage your budget efficiently and stay on track</p>
       </div>
 
-      {/* Main Grid */}
       <div className="grid gap-6 lg:grid-cols-2">
         <section className="card">
           <div className="flex items-center gap-2 mb-6">
@@ -53,12 +49,10 @@ export default function HomePage() {
         </section>
       </div>
 
-      {/* Dashboard Section */}
       <section className="card">
         <Dashboard />
       </section>
 
-      {/* Export Section */}
       <section className="card">
         <div className="flex items-center justify-between">
           <div>
@@ -72,7 +66,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Offline Badge */}
       <OfflineBadge />
     </div>
   );

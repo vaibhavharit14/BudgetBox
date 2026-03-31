@@ -6,7 +6,6 @@ import { z } from "zod";
 
 const router = Router();
 
-// ✅ Validation schemas
 const registerSchema = z.object({
   email: z.string().email("Invalid email format"),
   password: z.string().min(6, "Password must be at least 6 characters"),
@@ -17,9 +16,6 @@ const loginSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
-
-
-// ✅ Register user
 router.post("/register", async (req: Request, res: Response): Promise<Response> => {
   try {
     const parsed = registerSchema.safeParse(req.body);
@@ -56,7 +52,6 @@ router.post("/register", async (req: Request, res: Response): Promise<Response> 
   }
 });
 
-// ✅ Login user
 router.post("/login", async (req: Request, res: Response): Promise<Response> => {
   try {
     const parsed = loginSchema.safeParse(req.body);
@@ -70,7 +65,6 @@ router.post("/login", async (req: Request, res: Response): Promise<Response> => 
 
     const { email, password } = parsed.data;
 
-    // Ensure JWT_SECRET is available before proceeding
     if (!process.env.JWT_SECRET) {
       console.error("❌ Login error: JWT_SECRET is missing");
       return res.status(500).json({ success: false, message: "Server misconfiguration (missing JWT_SECRET)" });
@@ -86,7 +80,6 @@ router.post("/login", async (req: Request, res: Response): Promise<Response> => 
       return res.status(401).json({ success: false, message: "Invalid email or password" });
     }
 
-    // ✅ Issue JWT
     const token = jwt.sign(
       { id: user.id, email: user.email },
       process.env.JWT_SECRET as string,
@@ -105,4 +98,5 @@ router.post("/login", async (req: Request, res: Response): Promise<Response> => 
   }
 });
 
-export default router;
+export default router;
+

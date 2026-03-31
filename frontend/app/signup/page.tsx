@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
 import { register } from "../../src/utils/api";
 import Link from "next/link";
 
@@ -34,7 +33,6 @@ export default function SignupPage() {
     try {
       const res = await register(email, password, confirm);
       if (res.success) {
-        // Redirect to login page instead of auto-login
         router.push("/login");
       } else {
         setError(res.message || "Registration failed");
@@ -140,4 +138,4 @@ export default function SignupPage() {
       </div>
     </div>
   );
-}
+}

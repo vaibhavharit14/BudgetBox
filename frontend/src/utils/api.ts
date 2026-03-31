@@ -77,4 +77,4 @@ export async function getLatestBudget() {
 
 export function logout() {
   localStorage.removeItem("token");
-}
+}
