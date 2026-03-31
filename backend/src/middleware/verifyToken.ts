@@ -23,4 +23,4 @@ export function verifyToken(req: AuthRequest, res: Response, next: NextFunction)
   } catch {
     return res.status(401).json({ success: false, message: "Invalid token" });
   }
-}
+}

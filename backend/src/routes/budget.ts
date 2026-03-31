@@ -5,7 +5,6 @@ import { z } from "zod";
 
 const router = Router();
 
-// Validation schema
 const budgetSchema = z.object({
   income: z.string(),
   monthly_bills: z.string(),
@@ -16,7 +15,6 @@ const budgetSchema = z.object({
   description: z.string(),
 });
 
-// Sync budget (upsert)
 router.post("/sync", verifyToken, async (req: AuthRequest, res) => {
   try {
     const parsed = budgetSchema.safeParse(req.body);
@@ -89,7 +87,6 @@ router.post("/sync", verifyToken, async (req: AuthRequest, res) => {
   }
 });
 
-// Get latest budget
 router.get("/latest", verifyToken, async (req: AuthRequest, res) => {
   try {
     const userId = (req.user as any).id;
@@ -103,7 +100,6 @@ router.get("/latest", verifyToken, async (req: AuthRequest, res) => {
       return res.status(404).json({ success: false, message: "No budget found" });
     }
 
-    // Normalize keys for the frontend (snake_case)
     const normalized = {
       id: budget.id,
       income: budget.income,
