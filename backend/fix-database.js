@@ -21,11 +21,11 @@ async function fixDatabase(retries = 10) {
     url = `${url}${separator}connect_timeout=30&pool_timeout=30`;
   }
   
-  // Render's External URL usually requires SSL, internal doesn't but doesn't hurt
+  // Render's External and sometimes Internal URL requires SSL require
   if (!url.includes('sslmode=') && !url.includes('ssl=')) {
     const separator = url.includes('?') ? '&' : '?';
-    // If it's on Render, safer to use no-verify if we don't know the exact cert
-    url = `${url}${separator}sslmode=no-verify`;
+    // For Render Postgres, sslmode=require is the standard
+    url = `${url}${separator}sslmode=require`;
   }
 
   console.log(`📡 URL check: ${url.startsWith('postgresql://') || url.startsWith('postgres://') ? 'Valid Protocol' : 'INVALID PROTOCOL'}`);
@@ -99,7 +99,7 @@ async function fixDatabase(retries = 10) {
     } catch (error) {
       console.error(`⚠️  Database sync attempt ${i} failed:`, error.message);
       if (i === retries) return;
-      await new Promise(resolve => setTimeout(resolve, 5000));
+      await new Promise(resolve => setTimeout(resolve, 10000));
     } finally {
       await prisma.$disconnect();
     }

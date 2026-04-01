@@ -81,29 +81,27 @@ app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
 
 const PORT = process.env.PORT || 4000;
 
-async function start() {
-  const maxRetries = 5;
-  for (let i = 1; i <= maxRetries; i++) {
-    try {
-      await prisma.$connect();
-      console.log("✅ Database connected successfully.");
-      await ensureDemoUser();
-      app.listen(PORT, () => {
-        console.log(`🚀 Server listening on port ${PORT}`);
-      });
-      return;
-    } catch (error: any) {
-      console.error(`⚠️  Database connection attempt ${i} failed:`, error.message);
-      if (i === maxRetries) {
-        console.error("❌ Failed to start server after multiple attempts.");
-        process.exit(1);
+app.listen(PORT, () => {
+  console.log(`🚀 Server listening on port ${PORT}`);
+  
+  // Background DB sync to not block Port Binding
+  (async () => {
+    const maxRetries = 10;
+    for (let i = 1; i <= maxRetries; i++) {
+      try {
+        await prisma.$connect();
+        console.log("✅ Database connected successfully.");
+        await ensureDemoUser();
+        return;
+      } catch (error: any) {
+        console.error(`⚠️  Database connection attempt ${i} failed:`, error.message);
+        if (i === maxRetries) {
+          console.error("❌ Critical: DB unreachable after 10 attempts.");
+          return;
+        }
+        await new Promise(resolve => setTimeout(resolve, 10000));
       }
-      const delay = 5000 * i;
-      console.log(`⏳ Waiting ${delay/1000}s before next retry...`);
-      await new Promise(resolve => setTimeout(resolve, delay));
     }
-  }
-}
-
-start();
+  })();
+});
 
