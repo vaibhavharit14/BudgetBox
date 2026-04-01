@@ -1,8 +1,11 @@
 import { PrismaClient } from '@prisma/client';
 
 function getSanitizedUrl() {
-  let url = process.env.DATABASE_URL || "";
-  if (!url) return url;
+  let url = process.env.DATABASE_URL || process.env.POSTGRES_URL || process.env.DB_URL || "";
+  if (!url) {
+    console.warn("⚠️  DATABASE_URL or equivalent not found in Environment Variables.");
+    return "";
+  }
 
   url = url.trim();
   if (url.startsWith('"') && url.endsWith('"')) {
@@ -14,23 +17,17 @@ function getSanitizedUrl() {
     url = 'postgresql://' + url.substring(11);
   }
 
-  // Final robust connection parameters for Render internal routing
   const separator = url.includes('?') ? '&' : '?';
   
   if (!url.includes('connect_timeout')) {
     url = `${url}${separator}connect_timeout=60`;
   }
   
-  // Adding pgbouncer and directConnection for pooled setups common on Render
-  if (!url.includes('pgbouncer')) {
-    const nextSep = url.includes('?') ? '&' : '?';
-    url = `${url}${nextSep}pgbouncer=true`;
-  }
-
-  // Most reliable SSL setting for Render Free Tier DBs
+  // For Internal URLs on Render, sslmode=require can sometimes be too strict.
+  // We'll use 'prefer' which works for both internal and external securely.
   if (!url.includes('sslmode=') && !url.includes('ssl=')) {
     const nextSep = url.includes('?') ? '&' : '?';
-    url = `${url}${nextSep}sslmode=no-verify`;
+    url = `${url}${nextSep}sslmode=prefer`;
   }
   
   return url;
