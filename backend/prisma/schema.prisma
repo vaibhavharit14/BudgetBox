@@ -1,5 +1,7 @@
 generator client {
   provider = "prisma-client-js"
+  // Explicitly point to node_modules relative to the schema for reliability
+  output   = "../node_modules/@prisma/client"
 }
 
 datasource db {
