@@ -9,6 +9,11 @@ function getSanitizedUrl() {
     url = url.substring(1, url.length - 1);
   }
 
+  // Force postgresql protocol if postgres is used
+  if (url.startsWith('postgres://')) {
+    url = 'postgresql://' + url.substring(11);
+  }
+
   // Final robust connection parameters for Render internal routing
   const separator = url.includes('?') ? '&' : '?';
   
@@ -22,7 +27,7 @@ function getSanitizedUrl() {
     url = `${url}${nextSep}pgbouncer=true`;
   }
 
-  // Some internal Render routing works better with no-verify SSL
+  // Most reliable SSL setting for Render Free Tier DBs
   if (!url.includes('sslmode=') && !url.includes('ssl=')) {
     const nextSep = url.includes('?') ? '&' : '?';
     url = `${url}${nextSep}sslmode=no-verify`;
