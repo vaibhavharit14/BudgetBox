@@ -1,9 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  experimental: {
-    reactCompiler: true,
-  },
+  /* reactCompiler is handled automatically in Next.js 15 via the babel-plugin-react-compiler */
 };
 
 export default nextConfig;

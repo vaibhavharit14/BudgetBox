@@ -15,9 +15,29 @@ async function fixDatabase(retries = 10) {
 
   process.env.DATABASE_URL = url;
   
-  console.log(`📡 URL check: ${url.startsWith('postgresql://') || url.startsWith('postgres://') ? 'Valid Protocol' : 'INVALID PROTOCOL'}`);
+  // Add better connection parameters for stability
+  if (!url.includes('connect_timeout')) {
+    const separator = url.includes('?') ? '&' : '?';
+    url = `${url}${separator}connect_timeout=30&pool_timeout=30`;
+  }
+  
+  // Render's External URL usually requires SSL, internal doesn't but doesn't hurt
+  if (!url.includes('sslmode=') && !url.includes('ssl=')) {
+    const separator = url.includes('?') ? '&' : '?';
+    // If it's on Render, safer to use no-verify if we don't know the exact cert
+    url = `${url}${separator}sslmode=no-verify`;
+  }
 
-  const prisma = new PrismaClient();
+  console.log(`📡 URL check: ${url.startsWith('postgresql://') || url.startsWith('postgres://') ? 'Valid Protocol' : 'INVALID PROTOCOL'}`);
+  console.log('💡 Using connection parameters for improved stability.');
+
+  const prisma = new PrismaClient({
+    datasources: {
+      db: {
+        url: url,
+      },
+    },
+  });
 
   for (let i = 1; i <= retries; i++) {
     try {
