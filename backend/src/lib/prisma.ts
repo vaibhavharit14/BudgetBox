@@ -5,19 +5,28 @@ function getSanitizedUrl() {
   if (!url) return url;
 
   url = url.trim();
-  // Remove quotes if present
   if (url.startsWith('"') && url.endsWith('"')) {
     url = url.substring(1, url.length - 1);
   }
 
-  // Add only essential timeout to handle cold starts
+  // Final robust connection parameters for Render internal routing
+  const separator = url.includes('?') ? '&' : '?';
+  
   if (!url.includes('connect_timeout')) {
-    const separator = url.includes('?') ? '&' : '?';
     url = `${url}${separator}connect_timeout=60`;
   }
   
-  // Note: We removed explicit 'sslmode=require' to let Render's 
-  // internal networking handle the encryption as per its own config.
+  // Adding pgbouncer and directConnection for pooled setups common on Render
+  if (!url.includes('pgbouncer')) {
+    const nextSep = url.includes('?') ? '&' : '?';
+    url = `${url}${nextSep}pgbouncer=true`;
+  }
+
+  // Some internal Render routing works better with no-verify SSL
+  if (!url.includes('sslmode=') && !url.includes('ssl=')) {
+    const nextSep = url.includes('?') ? '&' : '?';
+    url = `${url}${nextSep}sslmode=no-verify`;
+  }
   
   return url;
 }
