@@ -5,21 +5,19 @@ function getSanitizedUrl() {
   if (!url) return url;
 
   url = url.trim();
+  // Remove quotes if present
   if (url.startsWith('"') && url.endsWith('"')) {
     url = url.substring(1, url.length - 1);
   }
 
-  // Add standard connection parameters for Cloud DBs
+  // Add only essential timeout to handle cold starts
   if (!url.includes('connect_timeout')) {
     const separator = url.includes('?') ? '&' : '?';
-    url = `${url}${separator}connect_timeout=60&pool_timeout=60`;
+    url = `${url}${separator}connect_timeout=60`;
   }
   
-  // Render Postgres ALWAYS works better with sslmode=require
-  if (!url.includes('sslmode=') && !url.includes('ssl=')) {
-    const separator = url.includes('?') ? '&' : '?';
-    url = `${url}${separator}sslmode=require`;
-  }
+  // Note: We removed explicit 'sslmode=require' to let Render's 
+  // internal networking handle the encryption as per its own config.
   
   return url;
 }
